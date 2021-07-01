@@ -1,0 +1,47 @@
+<%= render "shared/error", obj: @room %>
+<% if flash.notice %>
+  <p><%= flash.notice %></p>
+<% end %>
+<div class="container reservations-new">
+  <div class="row">
+    <div class="col-6 offset-3">
+      <div class="reservations-new-nav">
+        <h4 class="reservations-new-check-content">予約内容確認</h4>
+        <h5 class="price-icon">
+          <%= @room.price %> / 日
+        </h5>
+        <div class="reservations-new-date-select">
+          <dl>
+            <dt>開始日</dt>
+            <dd><%= "#{@reservation.start_date}" %></dd>
+            <dt>終了日</dt>
+            <dd><%= @reservation.end_date %></dd>
+            <dt>使用日数：</dt>
+            <dd><%= @total_day = (@reservation.end_date - @reservation.start_date).to_i %>日</dd>
+            <dt>人数：</dt>
+            <dd><%= @reservation.people %>人</dd>
+            <dt>合計金額</dt>
+            <dd><%= @total_price = @reservation.people * @room.price * @total_day %></dd>
+          </dl>
+          <p class="reservations-new-check-content">上記内容でよろしければ「予約を確定」を押してください。</p>
+
+          <%= form_with model: @reservation, method: :post ,local: true, url: room_reservation_path do |f| %>
+            <%= f.hidden_field :room_id, value: @room.id %>
+            <%= f.hidden_field :user_id, value: current_user.id %>
+            <%= f.hidden_field :start_date %>
+            <%= f.hidden_field :end_date %>
+            <%= f.hidden_field :people %>
+            <%= f.submit '予約を確定',class: "btn btn-primary form-control my-3" %>
+          <% end %>
+        
+          <%= form_with model: @reservation ,local: true, url: room_path(@room.id) do |f| %>
+            <%= f.hidden_field :start_date %>
+            <%= f.hidden_field :end_date %>
+            <%= f.hidden_field :people %>
+            <%= f.submit 'ルーム詳細に戻る',class: "btn btn-secondary form-control" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
